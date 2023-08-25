@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties("healthcare-facility-management-redis")
+@ConfigurationProperties("healthcare.facility.management.database")
 public class ConnectionProperties {
 
     private String host;

@@ -1,16 +1,22 @@
 package com.djachtoma.configuration;
 
+import com.djachtoma.model.Patient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+
+import java.util.Collections;
 
 @Configuration
+@EnableRedisRepositories
 @RequiredArgsConstructor
-public class RedisConfiguration {
+public class RedisConfiguration extends KeyspaceConfiguration {
 
-    private ConnectionProperties properties;
+    private final ConnectionProperties properties;
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
@@ -22,9 +28,14 @@ public class RedisConfiguration {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<Object, Object> redisTemplate() {
+        RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
         return template;
+    }
+
+    @Override
+    protected Iterable<KeyspaceSettings> initialConfiguration() {
+        return Collections.singleton(new KeyspaceSettings(Patient.class, Patient.class.getCanonicalName()));
     }
 }
