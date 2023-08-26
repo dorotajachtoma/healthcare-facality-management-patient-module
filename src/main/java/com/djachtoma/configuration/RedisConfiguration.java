@@ -1,6 +1,6 @@
 package com.djachtoma.configuration;
 
-import com.djachtoma.model.Patient;
+import com.djachtoma.model.patient.Patient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,5 +1,8 @@
-package com.djachtoma.model;
+package com.djachtoma.model.patient;
 
+import com.djachtoma.model.Gender;
+import com.djachtoma.model.id.IDCard;
+import com.djachtoma.model.phone.PhoneNumber;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +26,6 @@ public class Patient implements Serializable {
     private String surname;
     private LocalDateTime dateOfBirth;
     private Gender gender;
-
-
+    private IDCard idCard;
+    private PhoneNumber phoneNumber;
 }
