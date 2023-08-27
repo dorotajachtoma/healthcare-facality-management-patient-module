@@ -7,7 +7,7 @@ import com.djachtoma.model.phone.PhoneNumber;
 
 public class PatientMapper {
 
-    public PatientDTO toDTO(Patient patient) {
+    public static PatientDTO toDTO(Patient patient) {
         return PatientDTO.builder()
                 .name(patient.getName())
                 .surname(patient.getSurname())
