@@ -33,7 +33,11 @@ public class PatientService {
         return patients;
     }
 
-    public PatientDTO getPatient(PatientFilter patientFilter) {
+    public PatientDTO getPatientById(String id) {
+        return toDTO(getPatient(id));
+    }
+
+    public PatientDTO getPatientByFilters(PatientFilter patientFilter) {
         return patientRepository.getPatientFilters(patientFilter)
                 .map(PatientMapper::toDTO)
                 .orElseThrow(() -> new ItemNotFoundException("Patient with provided data does not exits"));

@@ -12,6 +12,7 @@ public class ConnectionProperties {
     private String host;
     private Integer port;
     private Integer timeout;
+    private String password;
 
 
 }
