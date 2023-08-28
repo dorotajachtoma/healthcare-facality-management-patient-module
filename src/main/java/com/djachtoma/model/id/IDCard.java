@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.RedisHash;
 @AllArgsConstructor
 @NoArgsConstructor
 @RedisHash("idCard")
-public class IDCard {
+public class IDCard  {
 
     private String seriesNumber;
 }

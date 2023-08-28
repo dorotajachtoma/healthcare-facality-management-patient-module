@@ -24,6 +24,7 @@ public class RedisConfiguration extends KeyspaceConfiguration {
         connectionFactory.setPort(properties.getPort());
         connectionFactory.setHostName(properties.getHost());
         connectionFactory.setTimeout(properties.getTimeout());
+        connectionFactory.setPassword(properties.getPassword());
         return connectionFactory;
     }
 
