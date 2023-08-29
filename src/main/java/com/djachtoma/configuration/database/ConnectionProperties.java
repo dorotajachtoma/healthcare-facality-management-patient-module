@@ -1,4 +1,4 @@
-package com.djachtoma.configuration;
+package com.djachtoma.configuration.database;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
