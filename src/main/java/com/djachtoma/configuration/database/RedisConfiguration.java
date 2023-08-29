@@ -1,4 +1,4 @@
-package com.djachtoma.configuration;
+package com.djachtoma.configuration.database;
 
 import com.djachtoma.model.patient.Patient;
 import lombok.RequiredArgsConstructor;
