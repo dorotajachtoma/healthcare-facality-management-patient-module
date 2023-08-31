@@ -6,11 +6,10 @@ import org.testcontainers.utility.DockerImageName;
 public class RedisContainerSetup {
 
     private static final String DOCKER_IMAGE = "redis:5.0.3-alpine";
-    private static final Integer PORT = 6380;
+    private static final Integer PORT = 6379;
 
-    static {
-        GenericContainer<?> redisContainer = new GenericContainer<>(DockerImageName.parse(DOCKER_IMAGE));
-        redisContainer.addExposedPort(PORT);
+    public void start() {
+        GenericContainer<?> redisContainer = new GenericContainer<>(DockerImageName.parse(DOCKER_IMAGE)).withExposedPorts(PORT);
         redisContainer.start();
     }
 }
