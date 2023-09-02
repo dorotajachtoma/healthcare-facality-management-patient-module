@@ -11,5 +11,8 @@ public class RedisContainerSetup {
     public void start() {
         GenericContainer<?> redisContainer = new GenericContainer<>(DockerImageName.parse(DOCKER_IMAGE)).withExposedPorts(PORT);
         redisContainer.start();
+
+        System.setProperty("healthcare.facility.management.database.host", redisContainer.getContainerIpAddress());
+        System.setProperty("healthcare.facility.management.database.port", redisContainer.getFirstMappedPort().toString());
     }
 }

@@ -13,8 +13,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.djachtoma.model.patient.dto.PatientMapper.toDTO;
 import static com.djachtoma.utils.ObjectUtils.nullSafeUpdate;
@@ -27,10 +31,11 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
 
-    public TreeSet<PatientDTO> getPatients() {
-        TreeSet<PatientDTO> patients = new TreeSet<>();
-        patientRepository.findAll().forEach(patient -> patients.add(toDTO(patient)));
-        return patients;
+    public Flux<PatientDTO> getPatients() {
+        Iterable<PatientDTO> patients = Stream.of(patientRepository.findAll().iterator())
+                        .map(patient -> patientMapper.toDTO(patient.next()))
+                        .collect(Collectors.toList());
+        return (Flux<PatientDTO>) Flux.fromIterable(patients).subscribe();
     }
 
     public PatientDTO getPatientById(String id) {
@@ -44,10 +49,10 @@ public class PatientService {
     }
 
     @Transactional
-    public PatientDTO createPatient(PatientDTO patientDTO) {
+    public Mono<PatientDTO> createPatient(PatientDTO patientDTO) {
         Patient patient = patientMapper.toEntity(patientDTO);
         patientRepository.save(patient);
-        return toDTO(patient);
+        return (Mono<PatientDTO>) Mono.just(toDTO(patient)).subscribe();
     }
 
     @Transactional
