@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.TreeSet;
 
@@ -22,7 +24,7 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping
-    public TreeSet<PatientDTO> getPatients() {
+    public Flux<PatientDTO> getPatients() {
         return patientService.getPatients();
     }
 
@@ -32,7 +34,7 @@ public class PatientController {
     }
 
     @PostMapping
-    public PatientDTO createPatient(@RequestBody PatientDTO patientDTO) {
+    public Mono<PatientDTO> createPatient(@RequestBody PatientDTO patientDTO) {
         return patientService.createPatient(patientDTO);
     }
 

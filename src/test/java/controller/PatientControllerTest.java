@@ -1,5 +1,7 @@
 package controller;
 
+import com.djachtoma.configuration.database.ConnectionProperties;
+import com.djachtoma.controller.PatientController;
 import com.djachtoma.model.Gender;
 import com.djachtoma.model.patient.dto.PatientDTO;
 import configuration.RedisContainerSetup;
@@ -7,9 +9,11 @@ import configuration.TestSetup;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,8 +36,15 @@ public class PatientControllerTest extends TestSetup {
     @Autowired
     private RedisContainerSetup redisContainerSetup;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Before
     public void setup() {
+        client = WebTestClient.bindToApplicationContext(applicationContext).build()
+                .mutate()
+                .responseTimeout(Duration.ofMillis(20000))
+                .build();
         redisContainerSetup.start();
     }
 
