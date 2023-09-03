@@ -1,19 +1,15 @@
 package controller;
 
-import com.djachtoma.configuration.database.ConnectionProperties;
-import com.djachtoma.controller.PatientController;
 import com.djachtoma.model.Gender;
 import com.djachtoma.model.patient.dto.PatientDTO;
 import configuration.RedisContainerSetup;
 import configuration.TestSetup;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +19,7 @@ public class PatientControllerTest extends TestSetup {
 
     private static final String NAME = "NAME";
     private static final String SURNAME = "SURNAME";
-    private static final LocalDateTime DATE_OF_BIRTH = LocalDateTime.now();
+    private static final LocalDateTime DATE_OF_BIRTH = LocalDateTime.of(2023, 5, 10, 0, 0);
     private static final String PHONE_NUMBER = "552-123-565";
     private static final String ID_CARD_SERIES_NUMBER = "DFG2312";
     private static final String CITY = "CITY";
@@ -33,23 +29,26 @@ public class PatientControllerTest extends TestSetup {
     @Autowired
     private WebTestClient client;
 
-    @Autowired
     private RedisContainerSetup redisContainerSetup;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Before
+    @BeforeEach
     public void setup() {
-        client = WebTestClient.bindToApplicationContext(applicationContext).build()
-                .mutate()
-                .responseTimeout(Duration.ofMillis(20000))
-                .build();
         redisContainerSetup.start();
     }
 
     @Test
     public void getAllPatientsShouldReturnAllPatient() {
+        //given
+        PatientDTO patientDTO = getPatientDTO();
+        this.client.post()
+                .uri("/api/patient")
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(patientDTO)
+                .exchange()
+                .expectBody(PatientDTO.class)
+                .returnResult()
+                .getResponseBody();
+
         //when
         List<PatientDTO> result = this.client.get()
                 .uri("/api/patient")
@@ -58,7 +57,52 @@ public class PatientControllerTest extends TestSetup {
                 .expectBodyList(PatientDTO.class)
                 .returnResult()
                 .getResponseBody();
+
         //then
+        PatientDTO created = result.get(0);
+        assertThat(created.getName()).isEqualTo(patientDTO.getName());
+        assertThat(created.getSurname()).isEqualTo(patientDTO.getSurname());
+        assertThat(created.getGender()).isEqualTo(patientDTO.getGender());
+        assertThat(created.getPhoneNumber()).isEqualTo(patientDTO.getPhoneNumber());
+        assertThat(created.getDateOfBirth()).isEqualTo(patientDTO.getDateOfBirth().toString());
+        assertThat(created.getAddress()).isEqualTo(patientDTO.getAddress());
+        assertThat(created.getCity()).isEqualTo(patientDTO.getCity());
+        assertThat(created.getZipCode()).isEqualTo(patientDTO.getZipCode());
+        assertThat(created.getIdCardSeriesNumber()).isEqualTo(patientDTO.getIdCardSeriesNumber());
+    }
+
+    @Test
+    public void getPatientShouldReturnPatientDTO() {
+        //given
+        PatientDTO patientDTO = getPatientDTO();
+        PatientDTO created = this.client.post()
+                .uri("/api/patient")
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(patientDTO)
+                .exchange()
+                .expectBody(PatientDTO.class)
+                .returnResult()
+                .getResponseBody();
+
+        //when
+        PatientDTO result = this.client.get()
+                .uri("/api/patient/" + created.getId())
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectBody(PatientDTO.class)
+                .returnResult()
+                .getResponseBody();
+
+        //then
+        assertThat(created.getName()).isEqualTo(patientDTO.getName());
+        assertThat(created.getSurname()).isEqualTo(patientDTO.getSurname());
+        assertThat(created.getGender()).isEqualTo(patientDTO.getGender());
+        assertThat(created.getPhoneNumber()).isEqualTo(patientDTO.getPhoneNumber());
+        assertThat(created.getDateOfBirth()).isEqualTo(patientDTO.getDateOfBirth().toString());
+        assertThat(created.getAddress()).isEqualTo(patientDTO.getAddress());
+        assertThat(created.getCity()).isEqualTo(patientDTO.getCity());
+        assertThat(created.getZipCode()).isEqualTo(patientDTO.getZipCode());
+        assertThat(created.getIdCardSeriesNumber()).isEqualTo(patientDTO.getIdCardSeriesNumber());
     }
 
     @Test
@@ -67,7 +111,7 @@ public class PatientControllerTest extends TestSetup {
         PatientDTO patientDTO = getPatientDTO();
 
         //when
-        PatientDTO result = this.client.post()
+        PatientDTO created = this.client.post()
                 .uri("/api/patient")
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(patientDTO)
@@ -77,7 +121,65 @@ public class PatientControllerTest extends TestSetup {
                 .getResponseBody();
 
         //then
-        assertThat(patientDTO).isEqualTo(result);
+        assertThat(created.getName()).isEqualTo(patientDTO.getName());
+        assertThat(created.getSurname()).isEqualTo(patientDTO.getSurname());
+        assertThat(created.getGender()).isEqualTo(patientDTO.getGender());
+        assertThat(created.getPhoneNumber()).isEqualTo(patientDTO.getPhoneNumber());
+        assertThat(created.getDateOfBirth()).isEqualTo(patientDTO.getDateOfBirth().toString());
+        assertThat(created.getAddress()).isEqualTo(patientDTO.getAddress());
+        assertThat(created.getCity()).isEqualTo(patientDTO.getCity());
+        assertThat(created.getZipCode()).isEqualTo(patientDTO.getZipCode());
+        assertThat(created.getIdCardSeriesNumber()).isEqualTo(patientDTO.getIdCardSeriesNumber());
+    }
+
+    @Test
+    public void updatePatientShouldReturnPatientDTO() {
+        //given
+        PatientDTO patientDTO = getPatientDTO();
+        PatientDTO created = this.client.post()
+                .uri("/api/patient")
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(patientDTO)
+                .exchange()
+                .expectBody(PatientDTO.class)
+                .returnResult()
+                .getResponseBody();
+
+        //when
+        created.setName(SURNAME);
+
+        PatientDTO result = this.client.patch()
+                .uri("/api/patient/" + created.getId())
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(patientDTO)
+                .exchange()
+                .expectBody(PatientDTO.class)
+                .returnResult()
+                .getResponseBody();
+        //then
+        assertThat(result).isEqualTo(created);
+    }
+
+    @Test
+    public void deletePatientShouldDeletePatient() {
+        //given
+        PatientDTO patientDTO = getPatientDTO();
+        PatientDTO created = this.client.post()
+                .uri("/api/patient")
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(patientDTO)
+                .exchange()
+                .expectBody(PatientDTO.class)
+                .returnResult()
+                .getResponseBody();
+
+        //when
+        this.client.delete()
+                .uri("/api/patient/" + created.getId())
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isOk();
     }
 
     private static PatientDTO getPatientDTO() {

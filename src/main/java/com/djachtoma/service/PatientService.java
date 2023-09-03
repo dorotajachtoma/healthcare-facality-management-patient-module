@@ -5,7 +5,6 @@ import com.djachtoma.model.Gender;
 import com.djachtoma.model.id.IDCard;
 import com.djachtoma.model.patient.Patient;
 import com.djachtoma.model.patient.dto.PatientDTO;
-import com.djachtoma.model.patient.dto.PatientFilter;
 import com.djachtoma.model.patient.dto.PatientMapper;
 import com.djachtoma.model.phone.PhoneNumber;
 import com.djachtoma.repository.PatientRepository;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,26 +31,20 @@ public class PatientService {
 
     public Flux<PatientDTO> getPatients() {
         Iterable<PatientDTO> patients = Stream.of(patientRepository.findAll().iterator())
-                        .map(patient -> patientMapper.toDTO(patient.next()))
+                        .map(patient -> toDTO(patient.next()))
                         .collect(Collectors.toList());
-        return (Flux<PatientDTO>) Flux.fromIterable(patients).subscribe();
+        return Flux.fromIterable(patients);
     }
 
-    public PatientDTO getPatientById(String id) {
-        return toDTO(getPatient(id));
-    }
-
-    public PatientDTO getPatientByFilters(PatientFilter patientFilter) {
-        return patientRepository.getPatientFilters(patientFilter)
-                .map(PatientMapper::toDTO)
-                .orElseThrow(() -> new ItemNotFoundException("Patient with provided data does not exits"));
+    public Mono<PatientDTO> getPatientById(String id) {
+        return Mono.just(toDTO(getPatient(id)));
     }
 
     @Transactional
     public Mono<PatientDTO> createPatient(PatientDTO patientDTO) {
         Patient patient = patientMapper.toEntity(patientDTO);
         patientRepository.save(patient);
-        return (Mono<PatientDTO>) Mono.just(toDTO(patient)).subscribe();
+        return Mono.just(toDTO(patient));
     }
 
     @Transactional
@@ -62,10 +54,10 @@ public class PatientService {
     }
 
     @Transactional
-    public PatientDTO updatePatient(String id, PatientDTO patientDTO) {
+    public Mono<PatientDTO> updatePatient(String id, PatientDTO patientDTO) {
         Patient patient = getPatient(id);
         updatePatientEntity(patient, patientDTO);
-        return toDTO(patient);
+        return Mono.just(toDTO(patient));
     }
 
 
@@ -74,7 +66,7 @@ public class PatientService {
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Patient with provided ID: %s does not exit.", id)));
     }
 
-    private Patient updatePatientEntity(Patient patient, PatientDTO patientDTO) {
+    private void updatePatientEntity(Patient patient, PatientDTO patientDTO) {
         nullSafeUpdate(patientDTO.getName(), patientDTO::getName, patient::setName);
         nullSafeUpdate(patientDTO.getSurname(), patientDTO::getSurname, patient::setName);
         nullSafeUpdate(patientDTO.getGender(), patientDTO::getGender, x -> patient.setGender(Gender.valueOf(x)));
@@ -86,6 +78,5 @@ public class PatientService {
                 .number(x)
                 .build()));
         patientRepository.save(patient);
-        return patient;
     }
 }
