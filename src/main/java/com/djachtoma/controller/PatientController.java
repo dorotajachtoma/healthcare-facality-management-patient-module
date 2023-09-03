@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.TreeSet;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/patient")
@@ -29,7 +27,7 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    public PatientDTO getPatientById(@PathVariable String id) {
+    public Mono<PatientDTO> getPatientById(@PathVariable String id) {
         return patientService.getPatientById(id);
     }
 
@@ -39,7 +37,7 @@ public class PatientController {
     }
 
     @PatchMapping("/{id}")
-    public PatientDTO updatePatient(@PathVariable String id, @RequestBody PatientDTO patientDTO) {
+    public Mono<PatientDTO> updatePatient(@PathVariable String id, @RequestBody PatientDTO patientDTO) {
         return patientService.updatePatient(id, patientDTO);
     }
 

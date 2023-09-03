@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PatientDTO implements Comparable<PatientDTO> {
 
+    private String id;
     private String name;
     private String surname;
     private LocalDateTime dateOfBirth;
