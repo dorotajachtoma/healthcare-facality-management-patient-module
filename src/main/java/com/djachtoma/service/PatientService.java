@@ -1,12 +1,12 @@
 package com.djachtoma.service;
 
 import com.djachtoma.exception.ItemNotFoundException;
-import com.djachtoma.model.Gender;
-import com.djachtoma.model.id.IDCard;
 import com.djachtoma.model.patient.Patient;
 import com.djachtoma.model.patient.dto.PatientDTO;
 import com.djachtoma.model.patient.dto.PatientMapper;
-import com.djachtoma.model.phone.PhoneNumber;
+import com.djachtoma.reference.entity.model.Gender;
+import com.djachtoma.reference.entity.model.IDCard;
+import com.djachtoma.reference.entity.model.PhoneNumber;
 import com.djachtoma.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

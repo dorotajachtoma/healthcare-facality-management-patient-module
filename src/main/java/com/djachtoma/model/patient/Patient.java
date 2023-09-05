@@ -1,34 +1,32 @@
 package com.djachtoma.model.patient;
 
-import com.djachtoma.model.Gender;
-import com.djachtoma.model.address.Address;
-import com.djachtoma.model.id.IDCard;
-import com.djachtoma.model.phone.PhoneNumber;
+
+import com.djachtoma.reference.entity.model.Address;
+import com.djachtoma.reference.entity.model.Gender;
+import com.djachtoma.reference.entity.model.IDCard;
+import com.djachtoma.reference.entity.model.PhoneNumber;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-
+import com.djachtoma.reference.entity.model.Person;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @RedisHash("patient")
-public class Patient implements Serializable {
+public class Patient extends Person implements Serializable {
 
     @Id
     private String id;
-    private String name;
-    private String surname;
-    private LocalDateTime dateOfBirth;
-    private Gender gender;
-    private IDCard idCard;
-    private PhoneNumber phoneNumber;
-    private Address address;
 
+    @Builder
+    public Patient(String name, String surname, LocalDateTime dateOfBirth, Gender gender, IDCard idCard, PhoneNumber phoneNumber, Address address, String id) {
+        super(name, surname, dateOfBirth, gender, idCard, phoneNumber, address);
+        this.id = id;
+    }
 }
