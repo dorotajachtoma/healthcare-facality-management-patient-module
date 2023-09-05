@@ -1,10 +1,10 @@
 package com.djachtoma.model.patient.dto;
 
-import com.djachtoma.model.Gender;
-import com.djachtoma.model.address.Address;
-import com.djachtoma.model.id.IDCard;
 import com.djachtoma.model.patient.Patient;
-import com.djachtoma.model.phone.PhoneNumber;
+import com.djachtoma.reference.entity.model.Address;
+import com.djachtoma.reference.entity.model.Gender;
+import com.djachtoma.reference.entity.model.IDCard;
+import com.djachtoma.reference.entity.model.PhoneNumber;
 import org.springframework.stereotype.Component;
 
 @Component

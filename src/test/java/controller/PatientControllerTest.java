@@ -1,7 +1,7 @@
 package controller;
 
-import com.djachtoma.model.Gender;
 import com.djachtoma.model.patient.dto.PatientDTO;
+import com.djachtoma.reference.entity.model.Gender;
 import configuration.RedisContainerSetup;
 import configuration.TestSetup;
 import org.junit.Test;
