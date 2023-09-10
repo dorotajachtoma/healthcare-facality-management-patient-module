@@ -36,8 +36,8 @@ public class PatientService {
         return Flux.fromIterable(patients);
     }
 
-    public Mono<PatientDTO> getPatientById(String id) {
-        return Mono.just(toDTO(getPatient(id)));
+    public Mono<PatientDTO> getPatient(String id) {
+        return Mono.just(toDTO(getPatientById(id)));
     }
 
     @Transactional
@@ -49,19 +49,19 @@ public class PatientService {
 
     @Transactional
     public void deletePatient(String id) {
-        Patient patient = getPatient(id);
+        Patient patient = getPatientById(id);
         patientRepository.delete(patient);
     }
 
     @Transactional
     public Mono<PatientDTO> updatePatient(String id, PatientDTO patientDTO) {
-        Patient patient = getPatient(id);
+        Patient patient = getPatientById(id);
         updatePatientEntity(patient, patientDTO);
         return Mono.just(toDTO(patient));
     }
 
 
-    private Patient getPatient(String id) {
+    private Patient getPatientById(String id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Patient with provided ID: %s does not exit.", id)));
     }
