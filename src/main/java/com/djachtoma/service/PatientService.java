@@ -1,6 +1,6 @@
 package com.djachtoma.service;
 
-import com.djachtoma.exception.ItemNotFoundException;
+import com.djachtoma.exception.PatientNotFoundException;
 import com.djachtoma.model.patient.Patient;
 import com.djachtoma.model.patient.dto.PatientDTO;
 import com.djachtoma.model.patient.dto.PatientMapper;
@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.djachtoma.model.patient.dto.PatientMapper.toDTO;
 import static com.djachtoma.utils.ObjectUtils.nullSafeUpdate;
 
 @Slf4j
@@ -31,20 +30,20 @@ public class PatientService {
 
     public Flux<PatientDTO> getPatients() {
         Iterable<PatientDTO> patients = Stream.of(patientRepository.findAll().iterator())
-                        .map(patient -> toDTO(patient.next()))
+                        .map(patient -> patientMapper.toDTO(patient.next()))
                         .collect(Collectors.toList());
         return Flux.fromIterable(patients);
     }
 
     public Mono<PatientDTO> getPatient(String id) {
-        return Mono.just(toDTO(getPatientById(id)));
+        return Mono.just(patientMapper.toDTO(getPatientById(id)));
     }
 
     @Transactional
     public Mono<PatientDTO> createPatient(PatientDTO patientDTO) {
         Patient patient = patientMapper.toEntity(patientDTO);
         patientRepository.save(patient);
-        return Mono.just(toDTO(patient));
+        return Mono.just(patientMapper.toDTO(patient));
     }
 
     @Transactional
@@ -57,13 +56,13 @@ public class PatientService {
     public Mono<PatientDTO> updatePatient(String id, PatientDTO patientDTO) {
         Patient patient = getPatientById(id);
         updatePatientEntity(patient, patientDTO);
-        return Mono.just(toDTO(patient));
+        return Mono.just(patientMapper.toDTO(patient));
     }
 
 
     private Patient getPatientById(String id) {
         return patientRepository.findById(id)
-                .orElseThrow(() -> new ItemNotFoundException(String.format("Patient with provided ID: %s does not exit.", id)));
+                .orElseThrow(() -> new PatientNotFoundException(String.format("Patient with provided ID: %s does not exist.", id)));
     }
 
     private void updatePatientEntity(Patient patient, PatientDTO patientDTO) {
